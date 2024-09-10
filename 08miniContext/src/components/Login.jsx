@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react'
-import UserContext from '../context/userContext'
+import UserContext from '../context/UserContext'
 
 function Login() {
 
