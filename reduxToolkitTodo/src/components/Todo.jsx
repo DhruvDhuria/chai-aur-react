@@ -1,12 +1,23 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { removeTodo } from '../features/todo/todoSlice'
+import { removeTodo, updateTodo } from '../features/todo/todoSlice'
+
 
 
 function Todo() {
     const todos = useSelector(state => state.todos)
     const dispatch = useDispatch()
-    
+    const [todoMsg, setTodoMsg] = useState("")
+    const [isEditId, setIsEditId] = useState(null)
+
+   const updateHandler = (id) => {
+    if(todoMsg.trim() !== '') {
+      
+      dispatch(updateTodo( {id, text: todoMsg}))
+      setIsEditId(null)
+      setTodoMsg("")
+    }
+   }
 
   return (
     <>
@@ -17,11 +28,20 @@ function Todo() {
             className="mt-4 flex justify-between items-center bg-zinc-800 px-4 py-2 rounded"
             key={todo.id}
           >
-            <div className='text-white'>
-              {todo.text}
-            </div>
+            {isEditId === todo.id ? (
+              <input
+                type="text"
+                value={todoMsg}
+                onChange={(e) => setTodoMsg(e.target.value)}
+                className="text-black px-2 py-1 rounded"
+              />
+            ) : (
+              <div className='text-white'>{todo.text}</div>
+            )}
             <div className='flex gap-2'>
-              <button
+              {isEditId === todo.id? 
+              (<button
+              onClick={() => updateHandler(todo.id)}
               className='text-white px-4 py-1 bg-blue-500 border-0 focus:outline-none hover:bg-blue-600 rounded text-md'
               >
               <svg 
@@ -29,8 +49,21 @@ function Todo() {
               viewBox="0 0 24 24" 
               fill="rgba(255,255,255,1)"
               className='w-6 h-6'
-              ><path d="M6.41421 15.89L16.5563 5.74785L15.1421 4.33363L5 14.4758V15.89H6.41421ZM7.24264 17.89H3V13.6473L14.435 2.21231C14.8256 1.82179 15.4587 1.82179 15.8492 2.21231L18.6777 5.04074C19.0682 5.43126 19.0682 6.06443 18.6777 6.45495L7.24264 17.89ZM3 19.89H21V21.89H3V19.89Z"></path></svg>
-              </button>
+              ><path d="M7 19V13H17V19H19V7.82843L16.1716 5H5V19H7ZM4 3H17L21 7V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM9 15V19H15V15H9Z"></path></svg>
+              </button>)
+              : 
+              (<button
+              onClick={() => {
+                setIsEditId(todo.id)
+                setTodoMsg(todo.text)
+              }}
+              className='text-white px-4 py-1 bg-blue-500 border-0 focus:outline-none hover:bg-blue-600 rounded text-md'>
+                <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 24 24" 
+                fill="rgba(255,255,255,1)"
+                className='w-6 h-6'
+                ><path d="M6.41421 15.89L16.5563 5.74785L15.1421 4.33363L5 14.4758V15.89H6.41421ZM7.24264 17.89H3V13.6473L14.435 2.21231C14.8256 1.82179 15.4587 1.82179 15.8492 2.21231L18.6777 5.04074C19.0682 5.43126 19.0682 6.06443 18.6777 6.45495L7.24264 17.89ZM3 19.89H21V21.89H3V19.89Z"></path></svg></button>) }
               <button
               onClick={() => dispatch(removeTodo(todo.id))}
                 className="text-white bg-red-500 border-0 py-1 px-4 focus:outline-none hover:bg-red-600 rounded text-md"
